@@ -68,61 +68,7 @@ class MediaViewModel(
         _mediaFiles.value = mediaRepository.getMediaFilesFromRaw()
     }
 
-    /**
-     * Reproducir un video.
-     */
-    fun playMedia(uri: Uri) {
-        try {
-            val mediaItem = MediaItem.fromUri(uri)
-            exoPlayer.setMediaItem(mediaItem)
-            exoPlayer.prepare()
-            exoPlayer.play()
 
-            _playerState.value = PlayerState.PLAYING
-
-            startProgressUpdates()
-        } catch (e: Exception) {
-            Log.e("MediaViewModel", "Error al reproducir el archivo: ${e.message}")
-            _playerState.value = PlayerState.IDLE
-        }
-    }
-
-    /**
-     * Pausar la reproducción.
-     */
-    fun pauseMedia() {
-        exoPlayer.pause()
-        _playerState.value = PlayerState.PAUSED
-    }
-
-    /**
-     * Detener la reproducción.
-     */
-    fun stopMedia() {
-        exoPlayer.stop()
-        _playerState.value = PlayerState.STOPPED
-        _progress.value = 0L
-    }
-
-    /**
-     * Ir a una posición específica en el video.
-     */
-    fun seekTo(position: Long) {
-        exoPlayer.seekTo(position)
-        _progress.value = position
-    }
-
-    /**
-     * Activar o desactivar el sonido.
-     */
-    fun toggleMute() {
-        _isMuted.value = !_isMuted.value
-        exoPlayer.volume = if (_isMuted.value) 0f else 1f
-    }
-
-    /**
-     * Listener para monitorear cambios en ExoPlayer.
-     */
     private fun setupPlayerListener() {
         exoPlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
