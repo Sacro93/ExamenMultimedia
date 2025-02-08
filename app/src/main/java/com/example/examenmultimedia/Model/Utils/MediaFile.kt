@@ -1,4 +1,4 @@
-package com.example.examenmultimedia.Model
+package com.example.examenmultimedia.Model.Utils
 
 import android.graphics.Bitmap
 import android.net.Uri

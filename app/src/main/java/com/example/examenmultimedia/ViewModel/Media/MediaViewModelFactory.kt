@@ -1,20 +1,18 @@
-package com.example.examenmultimedia.ViewModel
+package com.example.examenmultimedia.ViewModel.Media
 
 import MediaViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.exoplayer.ExoPlayer
-import com.example.examenmultimedia.Model.MediaRepository
+import com.example.examenmultimedia.Model.Utils.MediaRepository
 
 class MediaViewModelFactory(
-    private val mediaRepository: MediaRepository,
-    private val exoPlayer: ExoPlayer
+    private val mediaRepository: MediaRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MediaViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return MediaViewModel(mediaRepository, exoPlayer) as T
+            return MediaViewModel(mediaRepository) as T // ExoPlayer eliminado
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

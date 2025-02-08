@@ -1,4 +1,4 @@
-package com.example.examenmultimedia.Model
+package com.example.examenmultimedia.Model.Utils
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -49,7 +49,7 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
 
                 Log.d("MediaRepository", "Archivo encontrado: $name, URI: $contentUri")
 
-                mediaList.add(MediaFile(contentUri, name, duration, thumbnail))
+                mediaList.add(MediaFile(contentUri, name, duration, null))
             }
         }
 
