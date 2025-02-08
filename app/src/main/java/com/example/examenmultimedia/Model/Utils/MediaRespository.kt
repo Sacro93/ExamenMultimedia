@@ -1,4 +1,4 @@
-package com.example.examenmultimedia.Model
+package com.example.examenmultimedia.Model.Utils
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -31,8 +31,7 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
         val uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
 
-        val resolver: ContentResolver = context.contentResolver
-        val cursor = resolver.query(uri, projection, null, null, sortOrder)
+        val cursor = context.contentResolver.query(uri, projection, null, null, sortOrder)
 
         cursor?.use {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
@@ -45,18 +44,65 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
                 val duration = it.getLong(durationColumn)
 
                 val contentUri = ContentUris.withAppendedId(uri, id)
-                val thumbnail = getThumbnail(contentUri)
 
-                Log.d("MediaRepository", "Archivo encontrado: $name, URI: $contentUri")
+                Log.d("MediaRepository", "Video encontrado: $name, URI: $contentUri")
 
-                mediaList.add(MediaFile(contentUri, name, duration, thumbnail))
+                mediaList.add(MediaFile(contentUri, name, duration, null, ""))
             }
         }
 
         return mediaList
     }
 
+
+
     /**
+     * Obtener archivos de audio desde el almacenamiento del dispositivo.
+     */
+    fun getAudioFilesFromMediaStore(): List<MediaFile> {
+        val audioList = mutableListOf<MediaFile>()
+
+        val projection = arrayOf(
+            MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.DISPLAY_NAME,
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media.ARTIST
+        )
+
+        val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
+
+        val cursor = context.contentResolver.query(uri, projection, null, null, sortOrder)
+
+        cursor?.use {
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
+            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
+            val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+            val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
+
+            while (it.moveToNext()) {
+                val id = it.getLong(idColumn)
+                val name = it.getString(nameColumn)
+                val duration = it.getLong(durationColumn)
+                val artist = it.getString(artistColumn) ?: "Desconocido"
+
+                val contentUri = ContentUris.withAppendedId(uri, id)
+                audioList.add(MediaFile(contentUri, name, duration, null, artist))
+            }
+        }
+
+        return audioList
+    }
+
+
+
+
+}
+
+
+/*
+*
+*  /**
      * Obtener archivos multimedia desde la carpeta res/raw.
      */
     fun getMediaFilesFromRaw(): List<MediaFile> {
@@ -69,7 +115,7 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
 
         return rawFiles.map { (resId, title) ->
             val uri = Uri.parse("android.resource://${context.packageName}/$resId")
-            MediaFile(uri, title, getDurationFromRaw(uri), null)
+            MediaFile(uri, title, getDurationFromRaw(uri), null, "")
         }
     }
 
@@ -79,10 +125,12 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
     private fun getDurationFromRaw(uri: Uri): Long {
         val retriever = MediaMetadataRetriever()
         return try {
-            retriever.setDataSource(context, uri)
-            val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()
+            retriever.setDataSource(context, uri) // ✅ FIX: setDataSource correcto
+            val duration =
+                retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()
             duration ?: 0L
         } catch (e: Exception) {
+            Log.e("MediaRepository", "Error obteniendo duración: ${e.message}")
             0L
         } finally {
             retriever.release()
@@ -92,20 +140,13 @@ class MediaRepository @Inject constructor(@ApplicationContext private val contex
     /**
      * Obtener miniatura de un video.
      */
-    private fun getThumbnail(uri: Uri): Bitmap? {
-        val retriever = MediaMetadataRetriever()
+    fun getThumbnail(uri: Uri): Bitmap? {
         return try {
+            val retriever = MediaMetadataRetriever()
             retriever.setDataSource(context, uri)
-            retriever.embeddedPicture?.let {
-                BitmapFactory.decodeByteArray(it, 0, it.size)
-            }
+            retriever.frameAtTime // O usa un frame específico
         } catch (e: Exception) {
-            null
-        } finally {
-            retriever.release()
+            null // Usa una imagen genérica si es necesario
         }
     }
-}
-
-
-
+*/
