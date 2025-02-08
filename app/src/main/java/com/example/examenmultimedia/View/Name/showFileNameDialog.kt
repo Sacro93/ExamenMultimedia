@@ -1,11 +1,11 @@
-package com.example.examenmultimedia.View
+package com.example.examenmultimedia.View.Name
 
 import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.widget.EditText
 import android.widget.Toast
-import com.example.examenmultimedia.ViewModel.Media.CaptureViewModel
+import com.example.examenmultimedia.ViewModel.VM.VideoCapture.CaptureViewModel
 
 fun showFileNameDialog(
     context: Context,
@@ -15,7 +15,7 @@ fun showFileNameDialog(
     viewModel: CaptureViewModel
 ) {
     val input = EditText(context).apply {
-        hint = "Ingresale un nombre al video"
+        hint = "Ingresale un nombre "
     }
 
     AlertDialog.Builder(context)

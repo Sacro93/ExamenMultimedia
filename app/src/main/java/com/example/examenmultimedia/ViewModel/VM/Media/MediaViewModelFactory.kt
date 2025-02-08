@@ -1,6 +1,5 @@
-package com.example.examenmultimedia.ViewModel.Media
+package com.example.examenmultimedia.ViewModel.VM.Media
 
-import MediaViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.examenmultimedia.Model.Utils.MediaRepository

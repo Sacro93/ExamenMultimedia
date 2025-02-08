@@ -1,6 +1,6 @@
 package com.example.examenmultimedia.View
 
-import MediaViewModel
+import com.example.examenmultimedia.ViewModel.VM.Media.MediaViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,7 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.examenmultimedia.Model.Utils.MediaPlayerController
 import com.example.examenmultimedia.View.AppNavigation.AppNavigation
 import com.example.examenmultimedia.Model.Utils.MediaRepository
-import com.example.examenmultimedia.ViewModel.Media.CaptureViewModel
+import com.example.examenmultimedia.Model.Permission.RequestPermissionEffect
+import com.example.examenmultimedia.ViewModel.VM.VideoCapture.CaptureViewModel
 
 
 class MainActivity : ComponentActivity() {
