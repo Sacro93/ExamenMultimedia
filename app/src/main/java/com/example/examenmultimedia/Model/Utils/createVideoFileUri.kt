@@ -23,7 +23,7 @@ fun createVideoFileUri(context: Context): Uri {
     // Devuelve la URI utilizando FileProvider
     return FileProvider.getUriForFile(
         context,
-        "${context.packageName}.provider", // Asegúrate de que coincide con AndroidManifest.xml
+        "${context.packageName}.provider",
         videoFile
     )
 }

@@ -7,7 +7,7 @@ data class MediaFile(
     val uri: Uri,
     val title: String,
     val duration: Long,
-    val thumbnail: Bitmap? = null ,// Portada opcional
+    val thumbnail: Bitmap? = null ,
     val artist: String
 )
 

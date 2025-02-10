@@ -16,36 +16,19 @@ import androidx.navigation.NavController
 import com.example.examenmultimedia.Model.Utils.MediaFile
 import com.example.examenmultimedia.Model.Utils.MediaSource
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoScreen(navController: NavController, viewModel: MediaViewModel) {
     val mediaFiles by viewModel.mediaFiles.collectAsState() // Lista de videos/audios
     val currentSource by viewModel.source.collectAsState() // Fuente actual (Videos/Audios)
     val isLoading by viewModel.isLoading.collectAsState() // Estado de carga
+    val hasSelectedSource = remember { mutableStateOf(false) } // Estado para controlar si se seleccionó "Videos" o "Audios"
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(if (currentSource == MediaSource.DEVICE) "📽️ Videos" else "🎵 Audios") },
-                actions = {
-                    Row {
-                        TextButton(onClick = {
-                            if (currentSource != MediaSource.DEVICE) {
-                                viewModel.setSource(MediaSource.DEVICE) // Cambia a videos
-                            }
-                        }) {
-                            Text("Videos")
-                        }
-                        TextButton(onClick = {
-                            if (currentSource != MediaSource.RAW) {
-                                viewModel.setSource(MediaSource.RAW) // Cambia a audios
-                            }
-                        }) {
-                            Text("Audios")
-                        }
-                    }
-                }
-            )
+            TopAppBar(title = { Text("Selecciona una opción") })
         }
     ) { paddingValues ->
         Box(
@@ -54,17 +37,40 @@ fun VideoScreen(navController: NavController, viewModel: MediaViewModel) {
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            when {
-                isLoading -> {
-                    CircularProgressIndicator() // ⏳ Muestra un loader mientras se cargan los datos
+            if (!hasSelectedSource.value) {
+                // Muestra los botones si no se seleccionó ninguna fuente
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Button(onClick = {
+                        hasSelectedSource.value = true
+                        viewModel.setSource(MediaSource.DEVICE) // Cambia a videos
+                    }) {
+                        Text("📽️ Videos")
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = {
+                        hasSelectedSource.value = true
+                        viewModel.setSource(MediaSource.RAW) // Cambia a audios
+                    }) {
+                        Text("🎵 Audios")
+                    }
                 }
-                mediaFiles.isEmpty() -> {
-                    Text("📂 No hay archivos disponibles") // Muestra un mensaje si no hay datos
-                }
-                else -> {
-                    LazyColumn {
-                        items(mediaFiles) { media ->
-                            MediaItem(navController, media)
+            } else {
+                // Muestra la lista de videos o audios
+                when {
+                    isLoading -> {
+                        CircularProgressIndicator() // ⏳ Loader mientras se cargan los datos
+                    }
+                    mediaFiles.isEmpty() -> {
+                        Text("📂 No hay archivos disponibles") // Muestra mensaje si no hay datos
+                    }
+                    else -> {
+                        LazyColumn {
+                            items(mediaFiles) { media ->
+                                MediaItem(navController, media)
+                            }
                         }
                     }
                 }
